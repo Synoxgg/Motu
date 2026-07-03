@@ -372,10 +372,7 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-top: 20px;
-      margin-bottom: 12px;
     }
-    .pack-section-title:first-of-type { margin-top: 5px; }
 
     .packs-grid {
       display: grid;
@@ -817,7 +814,6 @@
       <div class="step-content">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 25px;">
             <h2 class="step-title" id="dispStep1Title" style="margin-bottom: 0;">Player Details</h2>
-            <i class="fa-solid fa-circle-info info-icon" style="font-size: 18px; margin-left: 0;" onclick="openModal('playerDetailsModal')"></i>
         </div>
 
         <div class="form-group">
@@ -877,16 +873,22 @@
             <button type="button" class="btn btn-secondary" id="backToDetails" style="padding: 6px 12px; font-size: 13px; width: auto; margin: 0; min-height: unset; flex-shrink: 0;">Change</button>
         </div>
 
-        <h2 class="step-title" id="dispStep2Title" style="margin-bottom: 20px;">UC PACKS</h2>
+        <h2 class="step-title" id="dispStep2Title" style="margin-bottom: 20px;">SELECT OPTIONS</h2>
 
         <!-- TRIAL UC PACK SECTION -->
-        <h3 class="pack-section-title" id="trialPackTitle">Trial UC Pack</h3>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 5px; margin-bottom: 12px;" id="trialPackTitleWrap">
+           <h3 class="pack-section-title" style="margin: 0;">Trial Packs</h3>
+           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px; margin-left: 0;" onclick="openModal('trialInfoModal')"></i>
+        </div>
         <div class="packs-grid" id="trialPacksGrid">
           <!-- Rendered dynamically -->
         </div>
 
         <!-- BULK UC PACK SECTION -->
-        <h3 class="pack-section-title">Bulk UC Pack</h3>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 20px; margin-bottom: 12px;" id="regularPackTitleWrap">
+           <h3 class="pack-section-title" style="margin: 0;">Regular Packs</h3>
+           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px; margin-left: 0;" onclick="openModal('regularInfoModal')"></i>
+        </div>
         <div class="packs-grid" id="bulkPacksGrid">
           <!-- Rendered dynamically -->
         </div>
@@ -1119,6 +1121,30 @@
   <div class="modal-overlay" id="contactModal" onclick="closeModalOutside(event, 'contactModal')"><div class="modal-box"><div class="modal-header"><h3>Contact Us</h3><button class="close-btn" onclick="closeModal('contactModal')"><i class="fas fa-times"></i></button></div><div class="modal-body" id="bodyContact"></div></div></div>
   
   <!-- NEW INFO MODALS -->
+  <div class="modal-overlay" id="trialInfoModal" onclick="closeModalOutside(event, 'trialInfoModal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 18px;">Trial Packs Info</h3>
+        <button class="close-btn" onclick="closeModal('trialInfoModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="color: #ccc; font-size: 14px; line-height: 1.6;">These special offer packs are strictly limited to <strong>one purchase per BGMI User ID</strong>. Once purchased, you cannot buy them again for the same account.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="regularInfoModal" onclick="closeModalOutside(event, 'regularInfoModal')">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 18px;">Regular Packs Info</h3>
+        <button class="close-btn" onclick="closeModal('regularInfoModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="color: #ccc; font-size: 14px; line-height: 1.6;">These standard packs have <strong>no purchase limits</strong>. You can buy them as many times as you want for the same BGMI account without any restrictions.</p>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="playerDetailsModal" onclick="closeModalOutside(event, 'playerDetailsModal')">
     <div class="modal-box">
       <div class="modal-header">
@@ -1365,7 +1391,7 @@
           <div id="adminTrialPacksList"></div>
           
           <!-- Manage Bulk Packs -->
-          <h4 class="admin-section-title">💎 Manage Bulk Packs (w/ Razorpay Links)</h4>
+          <h4 class="admin-section-title">💎 Manage Regular Packs (w/ Razorpay Links)</h4>
           <div id="adminBulkPacksList"></div>
           
           <!-- Add New Pack -->
@@ -1373,7 +1399,7 @@
           <div class="admin-input-group">
              <select id="newPackType" class="form-input" style="padding: 10px; width: 30%;">
                 <option value="trial">Trial</option>
-                <option value="bulk">Bulk</option>
+                <option value="bulk">Regular</option>
              </select>
              <input type="number" id="newPackUc" class="form-input" placeholder="UC" style="padding: 10px; width: 30%;">
              <input type="number" id="newPackPrice" class="form-input" placeholder="₹" style="padding: 10px; width: 30%;">
@@ -1514,8 +1540,8 @@
                     if(dbConfig.texts.ordersToday === "Orders Today" || dbConfig.texts.ordersToday === "Packs Delivered") {
                         dbConfig.texts.ordersToday = "Packs Delivered Today";
                     }
-                    if(dbConfig.texts.step2Title === "Select BGMI UC Packs") {
-                        dbConfig.texts.step2Title = "UC PACKS";
+                    if(dbConfig.texts.step2Title === "Select BGMI UC Packs" || dbConfig.texts.step2Title === "UC PACKS") {
+                        dbConfig.texts.step2Title = "SELECT OPTIONS";
                     }
                     if(dbConfig.policies.contentContact && dbConfig.policies.contentContact.includes("Krafton Inc")) {
                         dbConfig.policies.contentContact = dbConfig.policies.contentContact.replace("Krafton Inc", "UCIFY (INDIA) PRIVATE LIMITED");
@@ -1585,7 +1611,7 @@
             supportBadge: "24/7",
             ordersToday: "Packs Delivered Today", 
             step1Title: "Player Details",
-            step2Title: "UC PACKS",
+            step2Title: "SELECT OPTIONS",
             step3Title: "Payment",
             step3Subnote: "Complete your transaction.",
             totalPayable: "TOTAL PAYABLE (EXACT)",
@@ -1640,8 +1666,8 @@
     }
     
     // Auto-migrate old step 2 title and contact string if they have existing local config
-    if (window.siteConfig.texts && window.siteConfig.texts.step2Title === "Select BGMI UC Packs") {
-        window.siteConfig.texts.step2Title = "UC PACKS";
+    if (window.siteConfig.texts && (window.siteConfig.texts.step2Title === "Select BGMI UC Packs" || window.siteConfig.texts.step2Title === "UC PACKS")) {
+        window.siteConfig.texts.step2Title = "SELECT OPTIONS";
     }
     if (window.siteConfig.policies && window.siteConfig.policies.contentContact && window.siteConfig.policies.contentContact.includes("Krafton Inc")) {
         window.siteConfig.policies.contentContact = window.siteConfig.policies.contentContact.replace("Krafton Inc", "UCIFY (INDIA) PRIVATE LIMITED");
@@ -2346,17 +2372,23 @@
             
             const isTrialPack = trialUcValues.includes(card.dataset.uc.toString());
             
-            if ((isTrialPack && hasPurchasedAnyTrial) || purchasedPacks.includes(card.dataset.uc)) {
+            // POINT 6 FIX: Sirf Trial Packs par limit rakhi gayi hai. Regular packs kabhi hide nahi honge.
+            if (isTrialPack && (hasPurchasedAnyTrial || purchasedPacks.includes(card.dataset.uc))) {
                 card.classList.add('purchased');
             }
         });
 
-        const trialTitle = document.getElementById('trialPackTitle'); const trialGrid = document.getElementById('trialPacksGrid');
+        const trialTitleWrap = document.getElementById('trialPackTitleWrap'); const trialGrid = document.getElementById('trialPacksGrid');
         let trialPackVisible = false; document.querySelectorAll('#trialPacksGrid .pack-card').forEach(card => { if(!card.classList.contains('purchased')) trialPackVisible = true; });
         const tPacksCount = window.siteConfig.trialPacks ? window.siteConfig.trialPacks.length : 0;
         
-        if (!trialPackVisible && tPacksCount > 0) { if(trialTitle) trialTitle.style.display = 'none'; if(trialGrid) trialGrid.style.display = 'none';
-        } else { if(trialTitle) trialTitle.style.display = 'block'; if(trialGrid) trialGrid.style.display = 'grid'; }
+        if (!trialPackVisible && tPacksCount > 0) { 
+            if(trialTitleWrap) trialTitleWrap.style.display = 'none'; 
+            if(trialGrid) trialGrid.style.display = 'none';
+        } else { 
+            if(trialTitleWrap) trialTitleWrap.style.display = 'flex'; 
+            if(trialGrid) trialGrid.style.display = 'grid'; 
+        }
 
         btn.innerHTML = originalText; btn.disabled = false; showStep(2);
     };
