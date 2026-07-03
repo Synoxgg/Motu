@@ -295,6 +295,7 @@
     .form-label {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
@@ -305,7 +306,6 @@
     
     .info-icon {
       color: var(--primary);
-      margin-left: 8px;
       cursor: pointer;
       font-size: 14px;
       transition: color 0.2s, transform 0.2s;
@@ -496,19 +496,57 @@
     /* --- PAYMENT SECTION (STEP 3) --- */
     .payment-section { text-align: center; }
     
-    /* Pay Now Image Button Styling */
-    .pay-now-img {
-      width: 100%;
-      display: block;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      pointer-events: auto; /* Required to override global img unclickable behavior */
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      border: 1px solid var(--surface-border);
-      transition: all 0.2s ease;
+    /* Pay SECURELY Animated Button CSS */
+    @keyframes pulseBtn {
+      0% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(255, 184, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0); }
     }
-    .pay-now-img:active {
-      transform: scale(0.98);
+    .pay-btn-animated {
+      animation: pulseBtn 2s infinite;
+      font-size: 18px; 
+      padding: 16px; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 10px; 
+      width: 100%; 
+    }
+
+    /* Awaiting Payment Animations */
+    .scanner-line {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+      animation: scan 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      opacity: 0.6;
+      z-index: 1;
+    }
+    @keyframes scan {
+      0% { top: -5%; opacity: 0; }
+      10% { opacity: 0.6; }
+      50% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { top: 105%; opacity: 0; }
+    }
+    .status-ring {
+      position: absolute;
+      width: 100%; height: 100%;
+      border: 3px solid transparent;
+      border-top-color: var(--primary);
+      border-bottom-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+    }
+    .status-ring-inner {
+      position: absolute;
+      width: 65%; height: 65%;
+      border: 3px solid transparent;
+      border-left-color: var(--accent);
+      border-right-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite reverse;
     }
 
     /* Verification Box Styles */
@@ -876,18 +914,18 @@
         <h2 class="step-title" id="dispStep2Title" style="margin-bottom: 20px;">SELECT OPTIONS</h2>
 
         <!-- TRIAL UC PACK SECTION -->
-        <div style="display: flex; align-items: center; gap: 6px; margin-top: 5px; margin-bottom: 12px;" id="trialPackTitleWrap">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 12px;" id="trialPackTitleWrap">
            <h3 class="pack-section-title" style="margin: 0;">Trial Packs</h3>
-           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px; margin-left: 0;" onclick="openModal('trialInfoModal')"></i>
+           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px;" onclick="openModal('trialInfoModal')"></i>
         </div>
         <div class="packs-grid" id="trialPacksGrid">
           <!-- Rendered dynamically -->
         </div>
 
         <!-- BULK UC PACK SECTION -->
-        <div style="display: flex; align-items: center; gap: 6px; margin-top: 20px; margin-bottom: 12px;" id="regularPackTitleWrap">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; margin-bottom: 12px;" id="regularPackTitleWrap">
            <h3 class="pack-section-title" style="margin: 0;">Regular Packs</h3>
-           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px; margin-left: 0;" onclick="openModal('regularInfoModal')"></i>
+           <i class="fa-solid fa-circle-info info-icon" style="font-size: 14px;" onclick="openModal('regularInfoModal')"></i>
         </div>
         <div class="packs-grid" id="bulkPacksGrid">
           <!-- Rendered dynamically -->
@@ -958,18 +996,22 @@
                <i class="fa-solid fa-triangle-exclamation"></i> <strong id="dispWarnTitle">Limit Warning:</strong> <span id="dispWarnDesc">Personal UPI limits often fail for amounts over ₹2000.</span>
             </div>
 
-            <!-- PAY NOW IMAGE BUTTON (Replaced Old Tile) -->
-            <div id="razorpayCard" style="display:none; text-align:center; margin: 20px 0;">
-               <img src="pay-now.webp" alt="Pay Now" id="rzpRedirectBtn" class="pay-now-img" draggable="false">
-               <div style="font-size: 14px; color: var(--text-muted); margin-top: 15px; font-weight: 600;">
-                  Click pay now to complete your transaction.
+            <!-- CSS Animated Pay Button Container (Replaces the pay-now image) -->
+            <div id="razorpayCard" style="display:none; text-align:center; margin: 25px 0;">
+               <button type="button" id="rzpRedirectBtn" class="btn btn-primary pay-btn-animated">
+                  <i class="fa-solid fa-shield-halved"></i> PAY SECURELY
+               </button>
+               <div style="font-size: 13px; color: var(--text-muted); margin-top: 15px; font-weight: 600;">
+                  Click pay to complete your transaction.
                </div>
+               <img src="accepted-payment-modes.webp" alt="Accepted Payment Modes" style="width: 100%; max-width: 250px; height: auto; margin-top: 15px; border-radius: var(--radius-sm); opacity: 0.9;">
+               
                <!-- Hidden span to keep JS error free -->
                <span id="rzpExactAmountText" style="display:none;"></span>
             </div>
 
             <!-- Automated Verification UI Container -->
-            <div id="verificationStatus" class="auto-verify-box">
+            <div id="verificationStatus" class="auto-verify-box" data-verified="false">
                 <!-- Inner HTML is injected dynamically via JS -->
             </div>
 
@@ -1201,11 +1243,11 @@
        </div>
        <div class="modal-body">
           <div class="form-group">
-             <label class="form-label">Admin ID or Email</label>
+             <label class="form-label" style="justify-content: flex-start;">Admin ID or Email</label>
              <input type="text" class="form-input" id="adminUser" placeholder="Enter Admin ID">
           </div>
           <div class="form-group">
-             <label class="form-label">Password</label>
+             <label class="form-label" style="justify-content: flex-start;">Password</label>
              <input type="password" class="form-input" id="adminPass" placeholder="Enter password">
           </div>
           <div class="error-message" id="adminError" style="margin-bottom: 15px;">Invalid Credentials</div>
@@ -1797,16 +1839,27 @@
 
     window.injectDynamicStatusUI = function() {
         const vStatus = document.getElementById('verificationStatus');
-        if(!vStatus || vStatus.style.background === "rgba(0, 255, 157, 0.1)") return; 
+        if(!vStatus || vStatus.dataset.verified === "true") return; 
         
-        vStatus.style.background = "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.4) 100%)";
-        vStatus.style.borderColor = "var(--surface-border)";
-        vStatus.style.boxShadow = "0 10px 20px rgba(0,0,0,0.3)";
+        vStatus.style.background = "linear-gradient(145deg, rgba(14,14,18,0.9) 0%, rgba(5,5,7,0.95) 100%)";
+        vStatus.style.border = "1px solid rgba(255, 184, 0, 0.2)";
+        vStatus.style.boxShadow = "0 0 25px rgba(255, 184, 0, 0.05) inset, 0 10px 25px rgba(0,0,0,0.5)";
+        vStatus.style.position = "relative";
+        vStatus.style.overflow = "hidden";
         vStatus.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 5px 0;">
-                <i class="fas fa-circle-notch fa-spin" style="color: var(--primary); font-size: 22px;"></i>
-                <div style="font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 18px; letter-spacing: 1px; margin-top: 2px;">
+            <div class="scanner-line"></div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 15px 0; position: relative; z-index: 2;">
+                <div style="position: relative; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                   <div class="status-ring"></div>
+                   <div class="status-ring-inner"></div>
+                   <i class="fas fa-satellite-dish" style="color: #fff; font-size: 18px; opacity: 0.9; animation: pulse 1.5s infinite;"></i>
+                </div>
+                <div style="font-family: var(--font-display); font-weight: 800; color: var(--primary); font-size: 20px; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,184,0,0.3);">
                     ${getText('awaitingTitle')}
+                </div>
+                <div style="font-size: 12px; color: #ccc; font-weight: 500; text-align: center; line-height: 1.4;">
+                    ${getText('awaitingDesc1')} <strong style="color: #fff;">₹${exactPriceStr}</strong><br>
+                    ${getText('awaitingDesc2')}
                 </div>
             </div>
         `;
@@ -2482,6 +2535,7 @@
       // NEW: Set the dynamically requested UC text only
       document.getElementById('step3UcAmount').textContent = selectedPack.uc + " UC";
       
+      document.getElementById('verificationStatus').dataset.verified = "false"; // Reset verification status
       window.injectDynamicStatusUI(); 
       
       const warningEl = document.getElementById('highValueWarning');
@@ -2545,7 +2599,9 @@
 
     async function processSuccessfulPayment() {
         const vStatus = document.getElementById('verificationStatus');
-        vStatus.style.background = "rgba(0, 255, 157, 0.1)"; vStatus.style.borderColor = "var(--success)";
+        vStatus.dataset.verified = "true";
+        vStatus.style.background = "rgba(0, 255, 157, 0.1)"; 
+        vStatus.style.borderColor = "var(--success)";
         vStatus.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 5px 0;">
                 <i class="fas fa-check-circle" style="color: var(--success); font-size: 22px; animation: popIn 0.5s ease;"></i>
