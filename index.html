@@ -901,8 +901,10 @@
     <div id="step2" class="step">
       <div class="step-content">
         
-        <!-- User Details Bar placed ABOVE the title -->
-        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: var(--radius-md); border: 1px solid var(--surface-border); margin-bottom: 20px; margin-top: 5px;">
+        <h2 class="step-title" id="dispStep2Title" style="margin-bottom: 15px;">SELECT OPTIONS</h2>
+
+        <!-- User Details Bar placed ABOVE the packs -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: var(--radius-md); border: 1px solid var(--surface-border); margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-display); overflow: hidden; white-space: nowrap; flex: 1; margin-right: 10px;">
                 <span id="displayUid" style="color:var(--primary); font-weight: 700; font-size: 15px; text-overflow: ellipsis; overflow: hidden; flex-shrink: 0;">--</span>
                 <span style="color: var(--text-muted); font-size: 14px; flex-shrink: 0;">•</span>
@@ -910,8 +912,6 @@
             </div>
             <button type="button" class="btn btn-secondary" id="backToDetails" style="padding: 6px 12px; font-size: 13px; width: auto; margin: 0; min-height: unset; flex-shrink: 0;">Change</button>
         </div>
-
-        <h2 class="step-title" id="dispStep2Title" style="margin-bottom: 20px;">SELECT OPTIONS</h2>
 
         <!-- TRIAL UC PACK SECTION -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px; margin-bottom: 12px;" id="trialPackTitleWrap">
@@ -943,13 +943,16 @@
     <div id="step3" class="step">
       <div class="step-content">
 
-        <!-- NEW UC BLOCK MOVED ABOVE TITLE -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; margin-top: 5px;">
+        <h2 class="step-title" id="dispStep3Title" style="margin-bottom: 20px;">Payment</h2>
+        <p class="subnote" id="dispStep3Subnote" style="display: none !important; margin: 0;"></p>
+
+        <!-- NEW UC BLOCK -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 15px;">
            <img src="uc-logo.webp" alt="UC" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 0 15px rgba(255,184,0,0.4));">
            <div id="step3UcAmount" style="font-family: var(--font-display); font-size: 28px; font-weight: 800; color: #fff; letter-spacing: 1px;">-- UC</div>
         </div>
 
-        <!-- NEW USER DETAILS TILE MOVED ABOVE TITLE -->
+        <!-- NEW USER DETAILS TILE -->
         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: var(--radius-md); border: 1px solid var(--surface-border); margin-bottom: 25px;">
             <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-display); overflow: hidden; white-space: nowrap; flex: 1; margin-right: 10px;">
                 <span id="displayUidStep3" style="color:var(--primary); font-weight: 700; font-size: 15px; text-overflow: ellipsis; overflow: hidden; flex-shrink: 0;">--</span>
@@ -958,9 +961,6 @@
             </div>
             <button type="button" class="btn btn-secondary" id="backToDetailsStep3" style="padding: 6px 12px; font-size: 13px; width: auto; margin: 0; min-height: unset; flex-shrink: 0;">Change</button>
         </div>
-
-        <h2 class="step-title" id="dispStep3Title">Payment</h2>
-        <p class="subnote" id="dispStep3Subnote">Complete your transaction.</p>
 
         <div class="payment-section">
           
@@ -988,7 +988,7 @@
             <!-- Hidden original total payable text to avoid JS errors, visually removed as requested -->
             <div id="dispTotalPayable" style="display: none !important;"></div>
             
-            <div style="font-size: 36px; font-weight: 800; color: var(--primary); font-family: var(--font-display); margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,184,0,0.3);">
+            <div style="font-size: 36px; font-weight: 800; color: var(--primary); font-family: var(--font-display); margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,184,0,0.3); display: none !important;">
               <span id="paymentAmount">₹0</span>
             </div>
 
@@ -997,9 +997,9 @@
             </div>
 
             <!-- CSS Animated Pay Button Container (Replaces the pay-now image) -->
-            <div id="razorpayCard" style="display:none; text-align:center; margin: 25px 0;">
+            <div id="razorpayCard" style="display:none; text-align:center; margin: 15px 0 25px 0;">
                <button type="button" id="rzpRedirectBtn" class="btn btn-primary pay-btn-animated">
-                  <i class="fa-solid fa-shield-halved"></i> PAY SECURELY
+                  <i class="fa-solid fa-shield-halved"></i> PAY <span id="btnPayAmount1" style="margin-left: 5px;">₹0</span>
                </button>
                <div style="font-size: 13px; color: var(--text-muted); margin-top: 15px; font-weight: 600;">
                   Click pay to complete your transaction.
@@ -1022,7 +1022,7 @@
 
         <div class="btn-row" style="margin-top: 20px;" id="dispCancelBtnWrap">
           <button type="button" class="btn btn-secondary" id="back3" style="flex: 1;"><span id="dispCancelBtn">Go Back</span></button>
-          <button type="button" class="btn btn-primary" id="bottomPayBtn" style="flex: 1;"><i class="fa-solid fa-shield-halved"></i> Pay</button>
+          <button type="button" class="btn btn-primary" id="bottomPayBtn" style="flex: 1;"><i class="fa-solid fa-shield-halved"></i> PAY <span id="btnPayAmount2" style="margin-left: 5px;">₹0</span></button>
         </div>
       </div>
     </div>
@@ -1779,7 +1779,7 @@
         document.getElementById('dispStep1Title').textContent = getText('step1Title');
         document.getElementById('dispStep2Title').textContent = getText('step2Title');
         document.getElementById('dispStep3Title').textContent = getText('step3Title');
-        document.getElementById('dispStep3Subnote').textContent = getText('step3Subnote');
+        // document.getElementById('dispStep3Subnote').textContent = getText('step3Subnote'); // Visually hidden anyway
         
         // DispTotalPayable is visually removed from normal UI, but this keeps the Admin system error-free
         if (document.getElementById('dispTotalPayable')) {
@@ -1813,7 +1813,7 @@
         document.getElementById('dispStep1Title').style.display = getTgl('showStep1Title') ? 'block' : 'none';
         document.getElementById('dispStep2Title').style.display = getTgl('showStep2Title') ? 'block' : 'none';
         document.getElementById('dispStep3Title').style.display = getTgl('showStep3Title') ? 'block' : 'none';
-        document.getElementById('dispStep3Subnote').style.display = getTgl('showStep3Subnote') ? 'block' : 'none';
+        // document.getElementById('dispStep3Subnote').style.display = getTgl('showStep3Subnote') ? 'block' : 'none'; // Overridden via !important CSS
         
         document.getElementById('highValueWarning').style.display = getTgl('showWarnBanner') ? (parseInt(selectedPack?.price || 0) > 2000 ? 'block' : 'none') : 'none';
         document.getElementById('verificationStatus').style.display = getTgl('showAwaitingStatus') ? 'block' : 'none';
@@ -2530,6 +2530,10 @@
       document.getElementById('lockUI').style.display = 'none';
       
       const amountEl = document.getElementById('paymentAmount'); amountEl.textContent = '₹' + exactPriceStr;
+      const payBtnAmount1 = document.getElementById('btnPayAmount1');
+      if (payBtnAmount1) payBtnAmount1.textContent = '₹' + exactPriceStr;
+      const payBtnAmount2 = document.getElementById('btnPayAmount2');
+      if (payBtnAmount2) payBtnAmount2.textContent = '₹' + exactPriceStr;
       
       // NEW: Set the dynamically requested UC text only
       document.getElementById('step3UcAmount').textContent = selectedPack.uc + " UC";
@@ -2542,7 +2546,6 @@
       } else { warningEl.style.display = 'none'; }
         
       document.getElementById('razorpayCard').style.display = 'block';
-      document.getElementById('dispStep3Subnote').textContent = "Complete your transaction.";
 
       document.getElementById('rzpExactAmountText').textContent = exactPriceStr;
       
