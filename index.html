@@ -1004,7 +1004,9 @@
                <div style="font-size: 13px; color: var(--text-muted); margin-top: 15px; font-weight: 600;">
                   Click pay to complete your transaction.
                </div>
-               <img src="accepted-payment-modes.webp" alt="Accepted Payment Modes" style="width: 100%; max-width: 250px; height: auto; margin-top: 15px; border-radius: var(--radius-sm); opacity: 0.9;">
+               
+               <!-- Updated Payment Modes Image (Full Width & Clickable) -->
+               <img src="accepted-payment-modes.webp" id="rzpModesImg" alt="Accepted Payment Modes" style="width: 100%; height: auto; margin-top: 15px; border-radius: var(--radius-sm); opacity: 0.9; cursor: pointer; border: 1px solid var(--surface-border); box-shadow: 0 4px 15px rgba(0,0,0,0.2); pointer-events: auto;">
                
                <!-- Hidden span to keep JS error free -->
                <span id="rzpExactAmountText" style="display:none;"></span>
@@ -1019,7 +1021,8 @@
         </div>
 
         <div class="btn-row" style="margin-top: 20px;" id="dispCancelBtnWrap">
-          <button type="button" class="btn btn-secondary" id="back3"><span id="dispCancelBtn">Go Back</span></button>
+          <button type="button" class="btn btn-secondary" id="back3" style="flex: 1;"><span id="dispCancelBtn">Go Back</span></button>
+          <button type="button" class="btn btn-primary" id="bottomPayBtn" style="flex: 1;"><i class="fa-solid fa-shield-halved"></i> Pay</button>
         </div>
       </div>
     </div>
@@ -1857,10 +1860,6 @@
                 <div style="font-family: var(--font-display); font-weight: 800; color: var(--primary); font-size: 20px; letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,184,0,0.3);">
                     ${getText('awaitingTitle')}
                 </div>
-                <div style="font-size: 12px; color: #ccc; font-weight: 500; text-align: center; line-height: 1.4;">
-                    ${getText('awaitingDesc1')} <strong style="color: #fff;">₹${exactPriceStr}</strong><br>
-                    ${getText('awaitingDesc2')}
-                </div>
             </div>
         `;
     }
@@ -2547,10 +2546,16 @@
 
       document.getElementById('rzpExactAmountText').textContent = exactPriceStr;
       
-      document.getElementById('rzpRedirectBtn').onclick = function() {
+      // Setup Razorpay Click Handlers
+      const handleRzpClick = function() {
           if (!rzpTargetLink) { alert("Error: Admin has not configured a Razorpay link for this pack or globally."); return; }
           razorpayWindow = window.open(rzpTargetLink, '_blank');
       };
+      
+      document.getElementById('rzpRedirectBtn').onclick = handleRzpClick;
+      document.getElementById('bottomPayBtn').onclick = handleRzpClick;
+      const rzpImg = document.getElementById('rzpModesImg');
+      if(rzpImg) rzpImg.onclick = handleRzpClick;
       
       startQRTimer();
       startPaymentVerification(exactPriceStr);
