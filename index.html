@@ -1222,7 +1222,7 @@
                      <button class="btn btn-primary" onclick="addNewRzpLink()" style="padding: 10px; width: 30%;"><i class="fas fa-plus"></i> Add</button>
                   </div>
                   
-                  <label style="font-size:11px; color:#aaa; margin-bottom: 5px; display: block; margin-top: 15px;">Razorpay Webhook Google Sheet App URL</label>
+                  <label style="font-size:11px; color:#aaa; margin-bottom: 5px; display: block; margin-top: 15px;">Razorpay Webhook Google Sheet App URL (Leave empty to use hardcoded default)</label>
                   <input type="text" id="adminRazorpayApi" class="form-input" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px; padding:10px;">
               </div>
           </div>
@@ -1528,7 +1528,8 @@
                         delete dbConfig.razorpayLink;
                     }
 
-                    if(dbConfig.razorpayApiUrl === undefined) dbConfig.razorpayApiUrl = "";
+                    // ADDED HARDCODED FALLBACK FOR API URL IN FIREBASE SYNC
+                    if(dbConfig.razorpayApiUrl === undefined || dbConfig.razorpayApiUrl === "") dbConfig.razorpayApiUrl = "https://script.google.com/macros/s/AKfycby9ZtsDvV3Aqdg1XIfeEvt3dQQGXNn4inKC04RZjTGNxipHwlDyMhMx5iABq_kEdWKwzg/exec";
                     
                     const migratePacks = (packs) => {
                         if(packs) {
@@ -1574,7 +1575,8 @@
     const defaultAdminConfig = {
         adminAuth: { u: "c3lub3g=", p: "bW9vbnRhZ2U=" },
         razorpayLinks: [],
-        razorpayApiUrl: "", 
+        // ADDED HARDCODED API URL AS DEFAULT
+        razorpayApiUrl: "https://script.google.com/macros/s/AKfycby9ZtsDvV3Aqdg1XIfeEvt3dQQGXNn4inKC04RZjTGNxipHwlDyMhMx5iABq_kEdWKwzg/exec", 
         shopTiming: { startHour: 0, endHour: 9 },
         texts: {
             tagline: "BGMI UC • Lightning-fast delivery",
@@ -1651,7 +1653,8 @@
         delete window.siteConfig.razorpayLink;
     }
 
-    if(window.siteConfig.razorpayApiUrl === undefined) window.siteConfig.razorpayApiUrl = "";
+    // ADDED HARDCODED FALLBACK FOR API URL IN LOCAL SYNC
+    if(window.siteConfig.razorpayApiUrl === undefined || window.siteConfig.razorpayApiUrl === "") window.siteConfig.razorpayApiUrl = "https://script.google.com/macros/s/AKfycby9ZtsDvV3Aqdg1XIfeEvt3dQQGXNn4inKC04RZjTGNxipHwlDyMhMx5iABq_kEdWKwzg/exec";
     
     const migratePacks = (packs) => {
         if(packs) {
@@ -1859,7 +1862,7 @@
         const validU = window.siteConfig.adminAuth?.u || defaultAdminConfig.adminAuth.u;
         document.getElementById('adminSetUser').placeholder = "Current: " + atob(validU); document.getElementById('adminSetUser').value = ""; document.getElementById('adminSetPass').value = "";
         
-        document.getElementById('adminRazorpayApi').value = window.siteConfig.razorpayApiUrl || '';
+        document.getElementById('adminRazorpayApi').value = window.siteConfig.razorpayApiUrl === "https://script.google.com/macros/s/AKfycby9ZtsDvV3Aqdg1XIfeEvt3dQQGXNn4inKC04RZjTGNxipHwlDyMhMx5iABq_kEdWKwzg/exec" ? "" : window.siteConfig.razorpayApiUrl || '';
         document.getElementById('adminNightStart').value = window.siteConfig.shopTiming.startHour !== undefined ? window.siteConfig.shopTiming.startHour : 0;
         document.getElementById('adminNightEnd').value = window.siteConfig.shopTiming.endHour !== undefined ? window.siteConfig.shopTiming.endHour : 9;
         document.getElementById('adminTextTagline').value = getText('tagline'); document.getElementById('adminTextSecure').value = getText('secureBadge');
@@ -2482,7 +2485,9 @@
 
     function startPaymentVerification(amountToCheck) {
         if(paymentVerificationInterval) clearInterval(paymentVerificationInterval);
-        let verificationApiUrl = window.siteConfig.razorpayApiUrl;
+        
+        // ADDED FALLBACK CHECK LOGIC
+        let verificationApiUrl = window.siteConfig.razorpayApiUrl || "https://script.google.com/macros/s/AKfycby9ZtsDvV3Aqdg1XIfeEvt3dQQGXNn4inKC04RZjTGNxipHwlDyMhMx5iABq_kEdWKwzg/exec";
         
         paymentVerificationInterval = setInterval(async () => {
             try {
