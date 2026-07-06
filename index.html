@@ -931,6 +931,11 @@
           <!-- Rendered dynamically -->
         </div>
 
+        <!-- Note below UC packs -->
+        <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 20px; margin-top: 5px; line-height: 1.4;">
+           UC purchased through UCify fully counts towards all in-game events, including the BGMI UC UP Event.
+        </div>
+
         <!-- Buttons with Back button on the left -->
         <div class="btn-row">
            <button type="button" class="btn btn-secondary" onclick="history.back()">Back</button>
@@ -976,7 +981,7 @@
              <i class="fas fa-user-clock" style="font-size: 34px; color: var(--primary); margin-bottom: 12px;"></i>
              <h3 style="color: #fff; font-family: var(--font-display); margin-bottom: 8px; font-size: 22px;">System Busy</h3>
              <p style="font-size: 13px; color: #ccc; margin-bottom: 15px; line-height: 1.4;">Another user is currently completing a payment for this specific pack. To prevent transaction mix-ups, please wait.</p>
-             <div class="lock-timer-text" id="lockUITimer">01:20</div>
+             <div class="lock-timer-text" id="lockUITimer">Retry in 1 minute</div>
              <div class="btn-row" style="margin-top: 15px;">
                 <button class="btn btn-secondary" style="padding: 12px; font-size: 13px;" onclick="cancelLockWait()">Cancel</button>
                 <button class="btn btn-primary" style="padding: 12px; font-size: 13px;" onclick="checkLockAgain()">Check Again</button>
@@ -1527,8 +1532,8 @@
             
             if (lockSnap.exists()) {
                 const lockData = lockSnap.data();
-                // 1 min 20 sec = 80000 ms. Backend strictly matched with UI timer.
-                if (now - lockData.timestamp < 80000 && lockData.orderId !== currentOrderId) {
+                // 1 min = 60000 ms. Backend strictly matched with UI timer.
+                if (now - lockData.timestamp < 60000 && lockData.orderId !== currentOrderId) {
                     return false; // Locked by someone else
                 }
             }
@@ -1702,7 +1707,7 @@
             showPrivacy: true, contentPrivacy: "<h4>1. Information We Collect</h4><p>We collect your BGMI Player ID (UID) and In-Game Name (IGN) solely for the purpose of delivering the digital product. We process payments securely and do not store financial data.</p><h4>2. How We Use Your Data</h4><p>Your data is used strictly for order fulfillment, customer support, and transaction verification.</p><h4>3. Data Sharing</h4><p>We do not sell, trade, or rent user data to third parties. Information is only shared with our payment provider as required to process your transaction.</p>",
             showRefund: true, contentRefund: "<h4>1. Digital Goods Policy</h4><p>Because the products we sell are strictly digital in-game currency, <strong>all sales are final</strong>. Once the UC is successfully transferred to the provided UID, no refunds or cancellations can be processed.</p><h4>2. Failed Transactions</h4><p>If your payment is deducted but the order fails on our end, a full refund will be automatically initiated to your original payment method within 5-7 business days.</p><h4>3. Incorrect UID</h4><p>We are not responsible for UC sent to an incorrect UID provided by the user. No refunds will be issued in such cases.</p>",
             showShipping: true, contentShipping: "<h4>1. Delivery Method</h4><p>All deliveries are purely digital. No physical product will be shipped to your address.</p><h4>2. Delivery Time</h4><p>UC is typically credited to your account instantly or within 10-15 minutes. In case of server delays, please allow up to 24 hours for the transaction to reflect in your BGMI account.</p>",
-            showContact: true, contentContact: "<h4>Get in Touch</h4><p>If you face any issues with your order, please contact our support team. Have your Order ID and Transaction ID ready.</p><ul><li><strong>Business Name:</strong> UCIFY (INDIA) PRIVATE LIMITED</li><li><strong>Email Support:</strong> ucify.support@gmail.com</li><li><strong>Registered Address:</strong> HD-445, WeWork DLF Two Horizon Centre, 5th Floor, DLF Phase 5, Sector 43, Golf Course Road, Gurugram, Haryana 122002</li><li><strong>Business Address:</strong> 04A131, WeWork DLF Two Horizon Centre, 4th Floor, DLF Phase 5, Sector 43, Golf Course Road, Gurugram, Haryana 122002</li></ul>"
+            showContact: true, contentContact: "<h4>Get in Touch</h4><p>If you face any issues with your order, please contact our support team. Have your Order ID and Transaction ID ready.</p><ul><li><strong>Business Name:</strong> UCIFY (INDIA) PRIVATE LIMITED</li><li><strong>Email Support:</strong> ucify.support@gmail.com</li><li><strong>Registered Address:</strong> 102, Plot No 54, Vohra Chamber, Sect 19c, Vashi, Navi Mumbai, Maharashtra, 400705</li><li><strong>Business Address:</strong> 102, Plot No 54, Vohra Chamber, Sect 19c, Vashi, Navi Mumbai, Maharashtra, 400705</li></ul>"
         },
         trialPacks: [ { uc: 13, price: 5, rzpLinks: [] } ],
         bulkPacks: [
@@ -1726,6 +1731,10 @@
     }
     if (window.siteConfig.policies && window.siteConfig.policies.contentContact && window.siteConfig.policies.contentContact.includes("Krafton Inc")) {
         window.siteConfig.policies.contentContact = window.siteConfig.policies.contentContact.replace("Krafton Inc", "UCIFY (INDIA) PRIVATE LIMITED");
+    }
+    // Auto-migrate the updated address if they have the old one saved locally
+    if (window.siteConfig.policies && window.siteConfig.policies.contentContact && window.siteConfig.policies.contentContact.includes("HD-445, WeWork")) {
+        window.siteConfig.policies.contentContact = defaultAdminConfig.policies.contentContact;
     }
 
     if(window.siteConfig.razorpayLinks === undefined) window.siteConfig.razorpayLinks = [];
@@ -2467,13 +2476,13 @@
 
     // --- LOCK WAIT UI LOGIC ---
     window.cancelLockWait = function() {
-        if(lockWaitTimer) clearInterval(lockWaitTimer);
+        if(lockWaitTimer) clearTimeout(lockWaitTimer);
         document.getElementById('lockUI').style.display = 'none';
         history.back();
     }
     
     window.checkLockAgain = function() {
-        if(lockWaitTimer) clearInterval(lockWaitTimer);
+        if(lockWaitTimer) clearTimeout(lockWaitTimer);
         document.getElementById('lockUI').style.display = 'none';
         document.getElementById('next2').click();
     }
@@ -2486,16 +2495,14 @@
         
         showStep(3);
         
-        let waitTime = 80; // 1m 20s
         const display = document.getElementById('lockUITimer');
-        if(lockWaitTimer) clearInterval(lockWaitTimer);
+        display.textContent = "Retry in 1 minute";
         
-        lockWaitTimer = setInterval(() => {
-            waitTime--;
-            const mins = Math.floor(waitTime / 60); const secs = waitTime % 60;
-            display.textContent = `Retry in ${mins}:${secs.toString().padStart(2, '0')}`;
-            if(waitTime <= 0) { clearInterval(lockWaitTimer); display.textContent = "Ready to retry!"; }
-        }, 1000);
+        if(lockWaitTimer) clearTimeout(lockWaitTimer);
+        
+        lockWaitTimer = setTimeout(() => {
+            display.textContent = "Ready to retry!";
+        }, 60000); // 1 minute
     }
 
     // --- SMART PAYMENT PROCESSING ---
@@ -2595,8 +2602,8 @@
         
         paymentVerificationInterval = setInterval(async () => {
             try {
-                // ADDED: 1 min 20 sec phele ka timestamp (80,000 milliseconds earlier)
-                const validFromTime = Date.now() - 80000; 
+                // ADDED: 1 min phele ka timestamp (60,000 milliseconds earlier)
+                const validFromTime = Date.now() - 60000; 
                 // Passed startTime / validFrom to API so the backend can verify ONLY recent unused payments
                 const res = await fetch(`${verificationApiUrl}?amount=${amountToCheck}&startTime=${validFromTime}&validFrom=${validFromTime}&t=${Date.now()}`);
                 const data = await res.json();
