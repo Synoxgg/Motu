@@ -976,7 +976,7 @@
              <i class="fas fa-user-clock" style="font-size: 34px; color: var(--primary); margin-bottom: 12px;"></i>
              <h3 style="color: #fff; font-family: var(--font-display); margin-bottom: 8px; font-size: 22px;">System Busy</h3>
              <p style="font-size: 13px; color: #ccc; margin-bottom: 15px; line-height: 1.4;">Another user is currently completing a payment for this specific pack. To prevent transaction mix-ups, please wait.</p>
-             <div class="lock-timer-text" id="lockUITimer">02:00</div>
+             <div class="lock-timer-text" id="lockUITimer">01:20</div>
              <div class="btn-row" style="margin-top: 15px;">
                 <button class="btn btn-secondary" style="padding: 12px; font-size: 13px;" onclick="cancelLockWait()">Cancel</button>
                 <button class="btn btn-primary" style="padding: 12px; font-size: 13px;" onclick="checkLockAgain()">Check Again</button>
@@ -1074,7 +1074,7 @@
     <!-- GLOBAL INFO SECTION (APPEARS ON ALL PAGES) -->
     <div class="faq-section">
         <h2 class="step-title" style="font-size: 22px; margin-bottom: 12px; letter-spacing: 1px; text-align: left;">Why Choose UCify?</h2>
-        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.6; text-align: left;">Top up your BGMI account with Unknown Cash (UC) directly through UCify. No voucher codes, no redeem steps. Just enter your BGMI User ID, pick a UC pack, and the credits land in your account instantly. UCify offers both one-time bonus packs (with up to 100% bonus UC) and standard packs, so you can grab skins, the Royale Pass, outfits, and weapon upgrades without the hassle. All transactions are digital, single-use, and processed in real time.</p>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.6; text-align: left;">Top up your BGMI account with Unknown Cash (UC) directly through UCify. No voucher codes, no redeem steps. Just enter your BGMI User ID and BGMI ID name, pick a UC pack, and the credits land in your account instantly. UCify offers both one-time bonus packs (with up to 100% bonus UC) and standard packs, so you can grab skins, the Royale Pass, outfits, and weapon upgrades without the hassle. All transactions are digital, single-use, and processed in real time.</p>
     </div>
 
     <!-- GLOBAL FAQ SECTION (APPEARS ON ALL PAGES) -->
@@ -1138,6 +1138,16 @@
             </div>
             <div class="faq-answer">
                 Wait about 30 minutes, then check whether the UC has been credited to your BGMI account. If it still hasn't arrived, contact UCify support with your order ID and BGMI User ID.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <span>Does UC purchased from UCify count in the BGMI UC UP EVENT?</span>
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="faq-answer">
+                Yes, absolutely! Any UC purchased through UCify is officially transferred to your account and fully counts towards all in-game events, including the BGMI UC UP Event.
             </div>
         </div>
     </div>
@@ -1517,8 +1527,8 @@
             
             if (lockSnap.exists()) {
                 const lockData = lockSnap.data();
-                // 2 mins = 120000 ms. Backend strictly matched with UI 2-min timer.
-                if (now - lockData.timestamp < 120000 && lockData.orderId !== currentOrderId) {
+                // 1 min 20 sec = 80000 ms. Backend strictly matched with UI timer.
+                if (now - lockData.timestamp < 80000 && lockData.orderId !== currentOrderId) {
                     return false; // Locked by someone else
                 }
             }
@@ -1760,7 +1770,7 @@
     let razorpayWindow = null; 
     let qrTimer = null;
     let paymentVerificationInterval = null;
-    let timerSeconds = 120;
+    let timerSeconds = 80;
     let lockWaitTimer = null;
     let currentUid = "";
     let currentIgn = "";
@@ -2319,7 +2329,7 @@
 
     function startQRTimer(){
       if(qrTimer) clearInterval(qrTimer);
-      timerSeconds = 120; // 2 minutes auto redirect
+      timerSeconds = 80; // 1m 20s auto redirect
       
       qrTimer = setInterval(() => {
         timerSeconds--;
@@ -2476,7 +2486,7 @@
         
         showStep(3);
         
-        let waitTime = 120; // 2 minutes
+        let waitTime = 80; // 1m 20s
         const display = document.getElementById('lockUITimer');
         if(lockWaitTimer) clearInterval(lockWaitTimer);
         
@@ -2585,8 +2595,8 @@
         
         paymentVerificationInterval = setInterval(async () => {
             try {
-                // ADDED: 2 min phele ka timestamp (120,000 milliseconds earlier)
-                const validFromTime = Date.now() - 120000; 
+                // ADDED: 1 min 20 sec phele ka timestamp (80,000 milliseconds earlier)
+                const validFromTime = Date.now() - 80000; 
                 // Passed startTime / validFrom to API so the backend can verify ONLY recent unused payments
                 const res = await fetch(`${verificationApiUrl}?amount=${amountToCheck}&startTime=${validFromTime}&validFrom=${validFromTime}&t=${Date.now()}`);
                 const data = await res.json();
@@ -2655,7 +2665,7 @@
                     document.getElementById('gameLoaderWrap').style.display = 'block'; document.getElementById('nightMessage').style.display = 'none'; startDeliveryTimer();
                 }
             } catch(err) { alert("Connection failed while finishing order."); console.error(err); }
-        }, 1500);
+        }, 100);
     }
 
     function startDeliveryTimer() {
