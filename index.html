@@ -2716,8 +2716,8 @@
             const m = Math.floor(secondsLeft / 60); const s = secondsLeft % 60; timerText.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
             const totalDuration = 420; const percentage = ((totalDuration - secondsLeft) / totalDuration) * 100; fillBar.style.width = percentage + "%";
             
-            if(percentage < 20) msg.textContent = "Connecting to BGMI Servers..."; if(percentage >= 20 && percentage < 40) msg.textContent = "Connecting to BGMI Servers...";
-            if(percentage >= 40 && percentage < 60) msg.textContent = "Verifying UID & Player Name..."; if(percentage >= 60 && percentage < 80) msg.textContent = "Initiating UC Transfer...";
+            if(percentage < 20) msg.textContent = "Connecting to BGMI Servers..."; if(percentage >= 20 && percentage < 40) msg.textContent = "Verifying UID & Player Name...";
+            if(percentage >= 40 && percentage < 60) msg.textContent = "Initiating UC Transfer..."; if(percentage >= 60 && percentage < 80) msg.textContent = "Finalizing Transaction...";
             if(percentage >= 80 && percentage < 99) msg.textContent = "Finalizing Transaction...";
         }, 1000);
     }
