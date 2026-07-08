@@ -1098,7 +1098,7 @@
         </div>
 
         <div id="newOrderBtnWrap" style="margin-top: 20px;">
-          <button type="button" class="btn btn-primary" onclick="location.reload()" id="newOrderBtn"><span id="dispBtnNewOrder">Place Another Order</span></button>
+          <button type="button" class="btn btn-primary" onclick="location.reload()" id="newOrderBtn"><span id="dispBtnNewOrder">Purchase new pack</span></button>
         </div>
       </div>
     </div>
@@ -1386,7 +1386,7 @@
               <label style="font-size:12px; color:var(--success); font-weight:600;"><i class="fa-regular fa-circle-check"></i> Step 4 (Success Screen)</label>
               <div class="flex-row-center" style="margin-top:5px;"><input type="checkbox" id="tgl_successTitle" class="admin-toggle-box"><input type="text" class="form-input" id="adminTextSuccessTitle" placeholder="UC Purchased successfully" style="font-size:12px; padding:8px;"></div>
               <div class="flex-row-center"><input type="checkbox" checked disabled class="admin-toggle-box" style="opacity: 0.5;"><input type="text" class="form-input" id="adminTextFinalMsg" placeholder="UC Transfer Complete." style="font-size:12px; padding:8px;"></div>
-              <div class="flex-row-center"><input type="checkbox" checked disabled class="admin-toggle-box" style="opacity: 0.5;"><input type="text" class="form-input" id="adminTextBtnNew" placeholder="Place Another Order" style="font-size:12px; padding:8px;"></div>
+              <div class="flex-row-center"><input type="checkbox" checked disabled class="admin-toggle-box" style="opacity: 0.5;"><input type="text" class="form-input" id="adminTextBtnNew" placeholder="Purchase new pack" style="font-size:12px; padding:8px;"></div>
               
               <!-- RECEIPT EDITING -->
               <div style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px;">
@@ -1630,6 +1630,9 @@
                     if(dbConfig.texts.step2Title === "Select BGMI UC Packs" || dbConfig.texts.step2Title === "UC PACKS") {
                         dbConfig.texts.step2Title = "SELECT OPTIONS";
                     }
+                    if(dbConfig.texts.btnNewOrder === "Place Another Order") {
+                        dbConfig.texts.btnNewOrder = "Purchase new pack";
+                    }
                     if(dbConfig.policies.contentContact && dbConfig.policies.contentContact.includes("Krafton Inc")) {
                         dbConfig.policies.contentContact = dbConfig.policies.contentContact.replace("Krafton Inc", "UCIFY (INDIA) PRIVATE LIMITED");
                     }
@@ -1719,7 +1722,7 @@
             lblUid: "UID",
             lblIgn: "IGN",
             lblTime: "Time",
-            btnNewOrder: "Place Another Order"
+            btnNewOrder: "Purchase new pack"
         },
         toggles: {
             showTagline: true, showSecureBadge: true, showInstantBadge: true, showSupportBadge: true, showOrdersToday: true,
@@ -1756,6 +1759,12 @@
     if (window.siteConfig.texts && (window.siteConfig.texts.step2Title === "Select BGMI UC Packs" || window.siteConfig.texts.step2Title === "UC PACKS")) {
         window.siteConfig.texts.step2Title = "SELECT OPTIONS";
     }
+    
+    // Auto-migrate new button text
+    if (window.siteConfig.texts && (window.siteConfig.texts.btnNewOrder === "Place Another Order")) {
+        window.siteConfig.texts.btnNewOrder = "Purchase new pack";
+    }
+    
     if (window.siteConfig.policies && window.siteConfig.policies.contentContact && window.siteConfig.policies.contentContact.includes("Krafton Inc")) {
         window.siteConfig.policies.contentContact = window.siteConfig.policies.contentContact.replace("Krafton Inc", "UCIFY (INDIA) PRIVATE LIMITED");
     }
@@ -2742,6 +2751,12 @@
     // HISTORY POPSTATE LISTENER
     window.addEventListener('popstate', function(event) {
         const state = event.state;
+
+        // NEW LOGIC: Step 4 Intercept - If user tries to go back from success screen, Restart Flow
+        if (currentStep === 4) {
+            location.reload();
+            return;
+        }
 
         // Step 3 Cleanup if moving back FROM step 3
         if (currentStep === 3 && (!state || state.step !== 3)) {
