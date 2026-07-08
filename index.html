@@ -1065,8 +1065,8 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="color: var(--text-muted); font-size: 13px;">UC Credited</span>
                 <span style="color: var(--primary); font-weight: 700; font-family: var(--font-display); font-size: 18px; display: flex; align-items: center; gap: 6px;">
+                    <span id="finalUcVal">--</span>
                     <img src="uc-logo.webp" alt="UC" style="width: 18px; height: 18px; object-fit: contain;">
-                    <span id="finalUcVal">-- UC</span>
                 </span>
             </div>
         </div>
@@ -1090,7 +1090,11 @@
           <div class="receipt-row"><span class="receipt-label" id="dispLblAmount">Amount Paid</span><span class="receipt-value" id="receipt-amount">--</span></div>
           <div class="receipt-row"><span class="receipt-label" id="dispLblUid">UID</span><span class="receipt-value" id="receipt-uid">--</span></div>
           <div class="receipt-row"><span class="receipt-label" id="dispLblIgn">IGN</span><span class="receipt-value" id="receipt-ign">--</span></div>
-          <div class="receipt-row"><span class="receipt-label" id="dispLblTime">Time</span><span class="receipt-value" id="receipt-time">--</span></div>
+          <div class="receipt-row" style="border-bottom: 0; padding-bottom: 0; margin-bottom: 0;"><span class="receipt-label" id="dispLblTime">Time</span><span class="receipt-value" id="receipt-time">--</span></div>
+          
+          <div style="text-align: center; margin-top: 15px; border-top: 1px dashed #333; padding-top: 15px;">
+              <img src="signature.webp" alt="Authorized Signature" style="max-height: 35px; user-select: none; pointer-events: none;">
+          </div>
         </div>
 
         <div id="newOrderBtnWrap" style="margin-top: 20px;">
@@ -1100,13 +1104,13 @@
     </div>
     
     <!-- GLOBAL INFO SECTION (APPEARS ON ALL PAGES) -->
-    <div class="faq-section">
+    <div class="faq-section" id="whyChooseSection">
         <h2 class="step-title" style="font-size: 22px; margin-bottom: 12px; letter-spacing: 1px; text-align: left;">Why Choose UCify?</h2>
         <p style="color: var(--text-muted); font-size: 12px; line-height: 1.6; text-align: left;">Top up your BGMI account with Unknown Cash (UC) directly through UCify. No voucher codes, no redeem steps. Just enter your BGMI User ID and BGMI ID name, pick a UC pack, and the credits land in your account instantly. UCify offers both one-time bonus packs (with up to 100% bonus UC) and standard packs, so you can grab skins, the Royale Pass, outfits, and weapon upgrades without the hassle. All transactions are digital, single-use, and processed in real time.</p>
     </div>
 
     <!-- GLOBAL FAQ SECTION (APPEARS ON ALL PAGES) -->
-    <div class="faq-section">
+    <div class="faq-section" id="faqSectionGlob">
         <h2 class="step-title" style="font-size: 22px; margin-bottom: 15px; text-align: left;">Frequently Asked Questions</h2>
         
         <div class="faq-item">
@@ -2394,6 +2398,17 @@
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById(`step${step}`).classList.add('active'); currentStep = step; updateProgress();
       
+      // NEW LOGIC: Hide Global FAQ & Info tiles specifically on Step 4 (Success Screen)
+      const globalWhyChoose = document.getElementById('whyChooseSection');
+      const globalFAQ = document.getElementById('faqSectionGlob');
+      if (step === 4) {
+          if (globalWhyChoose) globalWhyChoose.style.display = 'none';
+          if (globalFAQ) globalFAQ.style.display = 'none';
+      } else {
+          if (globalWhyChoose) globalWhyChoose.style.display = 'block';
+          if (globalFAQ) globalFAQ.style.display = 'block';
+      }
+
       // Auto-scroll logic inside setTimeout to override browser's default scroll restoration 
       setTimeout(() => {
           const progressWrap = document.querySelector('.progress-wrap');
@@ -2681,7 +2696,9 @@
                 // NEW: Populate the final order details tile below the progress bar
                 document.getElementById('finalUidVal').textContent = currentUid;
                 document.getElementById('finalIgnVal').textContent = currentIgn;
-                document.getElementById('finalUcVal').textContent = selectedPack.uc + " UC";
+                
+                // FINAL UC UPDATE (Amount without "UC" text, only logo as requested)
+                document.getElementById('finalUcVal').textContent = selectedPack.uc;
                   
                 showStep(4); localStorage.removeItem('bgmiTimerEnd');
                 
@@ -2716,8 +2733,8 @@
             const m = Math.floor(secondsLeft / 60); const s = secondsLeft % 60; timerText.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
             const totalDuration = 420; const percentage = ((totalDuration - secondsLeft) / totalDuration) * 100; fillBar.style.width = percentage + "%";
             
-            if(percentage < 20) msg.textContent = "Connecting to BGMI Servers..."; if(percentage >= 20 && percentage < 40) msg.textContent = "Verifying UID & Player Name...";
-            if(percentage >= 40 && percentage < 60) msg.textContent = "Initiating UC Transfer..."; if(percentage >= 60 && percentage < 80) msg.textContent = "Finalizing Transaction...";
+            if(percentage < 20) msg.textContent = "Connecting to BGMI Servers..."; if(percentage >= 20 && percentage < 40) msg.textContent = "Connecting to BGMI Servers...";
+            if(percentage >= 40 && percentage < 60) msg.textContent = "Verifying UID & Player Name..."; if(percentage >= 60 && percentage < 80) msg.textContent = "Initiating UC Transfer...";
             if(percentage >= 80 && percentage < 99) msg.textContent = "Finalizing Transaction...";
         }, 1000);
     }
